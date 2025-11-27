@@ -40,6 +40,17 @@ const ChatBot: React.FC<ChatBotProps> = ({ contextData }) => {
       let systemInstruction = "You are a helpful research assistant bot analyzing academic publication data.";
       
       if (contextData) {
+        // aggregate and sort titles to give the AI context about the research topics
+        const allWorks = contextData.processedProfiles.flatMap(p => p.works);
+        // Sort by year descending to show most recent work first
+        allWorks.sort((a, b) => (b.year || 0) - (a.year || 0));
+        
+        // Take top 100 titles to provide sufficient context for topic analysis without overloading
+        const workTitles = allWorks
+          .slice(0, 100)
+          .map(w => `- ${w.title} (${w.year || 'n.d.'})`)
+          .join('\n');
+
         systemInstruction += `
         \n\nCURRENT DATA CONTEXT:
         - Total Researchers Analyzed: ${contextData.totalResearchers}
@@ -48,7 +59,13 @@ const ChatBot: React.FC<ChatBotProps> = ({ contextData }) => {
         - Top Years: ${contextData.publicationsByYear.slice(0, 3).map(y => `${y.year} (${y.count})`).join(', ')}
         - Top Types: ${contextData.publicationsByType.slice(0, 3).map(t => `${t.type} (${t.count})`).join(', ')}
         
-        Use this data to answer user questions about the specific analysis currently on screen. Be concise and professional.
+        SAMPLE PUBLICATION TITLES (use these to identify research topics, keywords, and scientific direction):
+        ${workTitles}
+        
+        INSTRUCTIONS:
+        - Use the provided titles to infer the scientific interests and research topics of the researcher(s).
+        - If the user asks about "scientific direction" or "topics", synthesize an answer based on the keywords found in the titles above.
+        - Be concise and professional.
         `;
       }
 
