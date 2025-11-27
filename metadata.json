@@ -1,0 +1,5 @@
+{
+  "name": "ORCID Analytics Agent",
+  "description": "An intelligent agent for analyzing and visualizing publication activity from ORCID profiles, integrated with Gemini AI.",
+  "requestFramePermissions": []
+}
