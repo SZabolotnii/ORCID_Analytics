@@ -48,7 +48,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ contextData }) => {
         // Take top 100 titles to provide sufficient context for topic analysis without overloading
         const workTitles = allWorks
           .slice(0, 100)
-          .map(w => `- ${w.title} (${w.year || 'n.d.'})`)
+          .map(w => `- ${w.title} (${w.year || 'n.d.'})${w.journal ? ` [Journal: ${w.journal}]` : ''}`)
           .join('\n');
 
         systemInstruction += `
@@ -59,12 +59,12 @@ const ChatBot: React.FC<ChatBotProps> = ({ contextData }) => {
         - Top Years: ${contextData.publicationsByYear.slice(0, 3).map(y => `${y.year} (${y.count})`).join(', ')}
         - Top Types: ${contextData.publicationsByType.slice(0, 3).map(t => `${t.type} (${t.count})`).join(', ')}
         
-        SAMPLE PUBLICATION TITLES (use these to identify research topics, keywords, and scientific direction):
+        SAMPLE PUBLICATION TITLES AND JOURNALS (use these to identify research topics, keywords, and scientific direction):
         ${workTitles}
         
         INSTRUCTIONS:
-        - Use the provided titles to infer the scientific interests and research topics of the researcher(s).
-        - If the user asks about "scientific direction" or "topics", synthesize an answer based on the keywords found in the titles above.
+        - Use the provided titles and journal names to infer the scientific interests and research topics of the researcher(s).
+        - If the user asks about "scientific direction" or "topics", synthesize an answer based on the keywords found in the titles and the journals they publish in.
         - Be concise and professional.
         `;
       }

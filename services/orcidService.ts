@@ -6,11 +6,13 @@ const ORCID_API_BASE = 'https://pub.orcid.org/v3.0';
 const generateMockData = (orcid: string): OrcidProfileData => {
   const years = [2018, 2019, 2020, 2021, 2022, 2023, 2024];
   const types = ['JOURNAL_ARTICLE', 'CONFERENCE_PAPER', 'BOOK_CHAPTER', 'BOOK'];
+  const journals = ['Journal of Scientific Computing', 'Nature Communications', 'IEEE Access', 'Physical Review Letters', 'Bioinformatics'];
   
   const works: OrcidWork[] = Array.from({ length: Math.floor(Math.random() * 20) + 5 }).map((_, i) => ({
     title: `Sample Research Publication ${i + 1} for ${orcid}`,
     year: years[Math.floor(Math.random() * years.length)],
     type: types[Math.floor(Math.random() * types.length)],
+    journal: journals[Math.floor(Math.random() * journals.length)],
     putCode: `mock-${i}`,
     doi: `10.1000/mock.${i}`
   }));
@@ -48,6 +50,7 @@ export const fetchOrcidData = async (orcidId: string): Promise<OrcidProfileData>
         title: summary.title?.title?.value || 'Untitled',
         year: yearStr ? parseInt(yearStr, 10) : null,
         type: summary.type ? summary.type.replace(/_/g, ' ') : 'UNKNOWN',
+        journal: summary['journal-title']?.value,
         putCode: summary['put-code'],
         doi: summary['external-ids']?.['external-id']?.find((id: any) => id['external-id-type'] === 'doi')?.['external-id-value']
       };
